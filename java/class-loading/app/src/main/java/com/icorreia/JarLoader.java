@@ -38,7 +38,7 @@ public class JarLoader extends ClassLoader {
         super(classLoader);
         this.classes = new HashMap<>();
         this.priorityToLocalClasses = priorityToLocalClasses;
-        this.jar = Files.readAllBytes(Paths.get(jarPath, new String[0]));
+        this.jar = Files.readAllBytes(Paths.get(jarPath));
     }
 
     @Override
@@ -89,6 +89,7 @@ public class JarLoader extends ClassLoader {
             final JarInputStream in = new JarInputStream(bais);
             JarEntry next;
             while ((next = in.getNextJarEntry()) != null) {
+                // We are loading a single class.
                 if (next.getName().replaceAll("/", ".").equals(className)) {
                     final ByteArrayOutputStream out = new ByteArrayOutputStream();
                     try {

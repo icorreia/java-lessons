@@ -3,8 +3,6 @@ package com.icorreia;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-
 /**
  *
  *
@@ -32,17 +30,17 @@ public class App {
          * If the value is 'null' and priorityToLocalClasses=false, it will only be able to return
          * twice the v0 for FilePrinter and will raise an exception for WebPrinter.
          */
-        JarLoader jarLoader = new JarLoader(null, "java/class-loading/version1/target/version1-1.0-SNAPSHOT.jar", false);
+        JarLoader jarLoader = new JarLoader(Thread.currentThread().getContextClassLoader(), "java/class-loading/version1/target/version1-1.0-SNAPSHOT.jar", true);
 
-        AppPrinter filePrinterV0 = new FilePrinter();
+        BasePrinter filePrinterV0 = new FilePrinter();
         logger.info("Printer says: {}", filePrinterV0.getVersion());
 
         Class<?> clazz = jarLoader.loadClass("com.icorreia.FilePrinter");
-        AppPrinter filePrinter = (AppPrinter) clazz.newInstance();
+        BasePrinter filePrinter = (BasePrinter) clazz.newInstance();
         logger.info("Printer says: {}", filePrinter.getVersion());
 
         clazz = jarLoader.loadClass("com.icorreia.WebPrinter");
-        AppPrinter webPrinter = (AppPrinter) clazz.newInstance();
+        BasePrinter webPrinter = (BasePrinter) clazz.newInstance();
         logger.info("Printer says: {}", webPrinter.getVersion());
     }
 }
