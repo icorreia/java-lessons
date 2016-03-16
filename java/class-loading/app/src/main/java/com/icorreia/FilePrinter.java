@@ -5,9 +5,9 @@ package com.icorreia;
  * @author Ivo Correai (idvcorreia@gmail.com)
  * @since 1.0
  */
-public class Printer {
+public class FilePrinter implements AppPrinter{
 
     public String getVersion() {
-        return "v2";
+        return "I am a FilePrinter-v0.";
     }
 }

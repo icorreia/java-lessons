@@ -23,6 +23,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <!-- LOGGING -->
             <dependency>
                 <groupId>org.slf4j</groupId>

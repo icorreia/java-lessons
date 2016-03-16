@@ -2,12 +2,14 @@ package com.icorreia;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 /**
  *
@@ -17,15 +19,6 @@ import java.util.jar.JarFile;
  * @since 1.0
  */
 public class JarLoader extends ClassLoader {
-    /**
-     * Path to version 1 of .jar file to load.
-     */
-    private String jarFileV1 = "java/class-loading/version1/target/version1-1.0-SNAPSHOT.jar";
-
-    /**
-     * Path to version 2 of .jar file to load.
-     */
-    private String jarFileV2 = "java/class-loading/version2/target/version2-1.0-SNAPSHOT.jar";
 
     /**
      * Cache and verify if class is defined already.
@@ -37,59 +30,86 @@ public class JarLoader extends ClassLoader {
      */
     private static final Logger logger = LoggerFactory.getLogger(JarLoader.class);
 
-    public JarLoader() {
-        super(JarLoader.class.getClassLoader()); //calls the parent class loader's constructor
+    private byte[] jar;
+
+    public JarLoader(final ClassLoader classLoader, final String jarPath) throws IOException {
+        super(classLoader);
+        this.classes = new HashMap<>();
         logger.info("Working directory is '{}'.", System.getProperty("user.dir"));
+        this.jar = Files.readAllBytes(Paths.get(jarPath, new String[0]));
     }
 
-
-    public Class loadJarV1() throws ClassNotFoundException {
-        return findClass("Printer", jarFileV1);
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException{
+        return findClass(name);
     }
 
-    public Class loadJarV2() throws ClassNotFoundException {
-        return findClass("Printer", jarFileV2);
-    }
+    /**
+     *
+     * @param name
+     * @return
+     * @throws ClassNotFoundException
+     */
+    @Override
+    protected Class<?> findClass(final String name) throws ClassNotFoundException{
 
-    public Class findClass(String className, String pathToJar) throws ClassNotFoundException {
-        byte classByte[];
-        Class result = classes.get(className);
-
-        if (result != null) {
-            logger.info("Class '{}' already lodaded.", className);
-            return result;
-        }
-
-        /* In the context of the present exercise, this call should not be successful,
-         * as we are trying to load a class from a .jar file which is not yet present
-         * in the main class loader.
-         */
-        try {
-            return findSystemClass(className);
-        } catch (Exception e) {
-            logger.info("Unsuccessfully tried to find class '{}' in system.", className);
+        Class<?> clazz = loadLocalClass(name);
+        if (clazz != null) {
+            return clazz;
         }
 
         try {
-            JarFile jar = new JarFile(pathToJar);
-            logger.info("Successfully loaded .jar file.");
-            JarEntry entry = jar.getJarEntry(className + ".class");
-            InputStream is = jar.getInputStream(entry);
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            int nextValue = is.read();
-            while (-1 != nextValue) {
-                byteStream.write(nextValue);
-                nextValue = is.read();
+            return Class.forName(name);
+        }
+        catch (ClassNotFoundException nfe) {
+            try {
+                return this.getParent().loadClass(name);
             }
-
-            classByte = byteStream.toByteArray();
-            result = defineClass(className, classByte, 0, classByte.length, null);
-            classes.put(className, result);
-            return result;
-        } catch (Exception e) {
-            logger.info("Could not load class '{}' from .jar file: ", className, e);
-            return null;
+            catch (ClassNotFoundException nfe2) {
+                    return ClassLoader.getSystemClassLoader().loadClass(name);
+            }
         }
+    }
+
+    public Class<?> loadLocalClass(String name) {
+        if (this.classes.containsKey(name)) {
+            return this.classes.get(name);
+        }
+        try {
+            final String className = name.concat(".class");
+            final ByteArrayInputStream bais = new ByteArrayInputStream(this.jar);
+            final JarInputStream in = new JarInputStream(bais);
+            JarEntry next;
+            while ((next = in.getNextJarEntry()) != null) {
+                if (next.getName().replaceAll("/", ".").equals(className)) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    try {
+                        byte[] buffer = new byte[2048];
+                        int read;
+                        while (in.available() > 0) {
+                            read = in.read(buffer, 0, buffer.length);
+                            if (read < 0) {
+                                break;
+                            }
+                            out.write(buffer, 0, read);
+                        }
+                        buffer = out.toByteArray();
+                        final Class<?> aClass = this.defineClass(name, buffer, 0, buffer.length);
+                        this.classes.put(name, aClass);
+                        return aClass;
+                    }
+                    finally {
+                        out.close();
+                        bais.close();
+                    }
+                }
+            }
+        }
+        catch (IOException e) {
+            logger.error("Could not load class '{}': ", name, e);
+        }
+
+        return null;
     }
 
 }

@@ -14,7 +14,6 @@
     <modules>
         <module>app</module>
         <module>version1</module>
-        <module>version2</module>
     </modules>
     <artifactId>class-loading</artifactId>
     <packaging>pom</packaging>

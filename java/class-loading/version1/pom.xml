@@ -12,4 +12,13 @@
     </parent>
     
     <artifactId>version1</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.icorreia</groupId>
+            <artifactId>app</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

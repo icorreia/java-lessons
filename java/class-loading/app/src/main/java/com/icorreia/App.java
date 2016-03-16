@@ -24,12 +24,18 @@ public class App {
      * @param args
      */
     public static void main(String[] args) throws Exception{
-        JarLoader jarLoader = new JarLoader();
 
-        Class<?> clazz = jarLoader.loadJarV1();
-        Constructor<?> ctor = clazz.getConstructor(Printer.class);
-        Printer printer = (Printer) ctor.newInstance();
+        JarLoader jarLoader = new JarLoader(Thread.currentThread().getContextClassLoader(), "java/class-loading/version1/target/version1-1.0-SNAPSHOT.jar");
 
-        logger.info("The version is: {}", printer.getVersion());
+        AppPrinter filePrinterV0 = new FilePrinter();
+        logger.info("Printer says: {}", filePrinterV0.getVersion());
+
+        Class<?> clazz = jarLoader.loadClass("com.icorreia.FilePrinter");
+        AppPrinter filePrinter = (AppPrinter) clazz.newInstance();
+        logger.info("Printer says: {}", filePrinter.getVersion());
+
+        clazz = jarLoader.loadClass("com.icorreia.WebPrinter");
+        AppPrinter webPrinter = (AppPrinter) clazz.newInstance();
+        logger.info("Printer says: {}", webPrinter.getVersion());
     }
 }
