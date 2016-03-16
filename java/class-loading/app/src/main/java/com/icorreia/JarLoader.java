@@ -13,7 +13,7 @@ import java.util.jar.JarInputStream;
 
 /**
  *
- * Initial implementation based on http://kalanir.blogspot.com/2010/01/how-to-write-custom-class-loader-to.html.
+ * This class loader gives privilege
  *
  * @author Ivo Correia (idvcorreia@gmail.com)
  * @since 1.0
@@ -30,12 +30,14 @@ public class JarLoader extends ClassLoader {
      */
     private static final Logger logger = LoggerFactory.getLogger(JarLoader.class);
 
+    private final boolean priorityToLocalClasses;
+
     private byte[] jar;
 
-    public JarLoader(final ClassLoader classLoader, final String jarPath) throws IOException {
+    public JarLoader(final ClassLoader classLoader, final String jarPath, final boolean priorityToLocalClasses) throws IOException {
         super(classLoader);
         this.classes = new HashMap<>();
-        logger.info("Working directory is '{}'.", System.getProperty("user.dir"));
+        this.priorityToLocalClasses = priorityToLocalClasses;
         this.jar = Files.readAllBytes(Paths.get(jarPath, new String[0]));
     }
 
@@ -53,9 +55,11 @@ public class JarLoader extends ClassLoader {
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException{
 
-        Class<?> clazz = loadLocalClass(name);
-        if (clazz != null) {
-            return clazz;
+        if (priorityToLocalClasses) {
+            Class<?> clazz = loadLocalClass(name);
+            if (clazz != null) {
+                return clazz;
+            }
         }
 
         try {
@@ -66,7 +70,11 @@ public class JarLoader extends ClassLoader {
                 return this.getParent().loadClass(name);
             }
             catch (ClassNotFoundException nfe2) {
+                try {
                     return ClassLoader.getSystemClassLoader().loadClass(name);
+                } catch (ClassNotFoundException nfe3) {
+                    return loadLocalClass(name);
+                }
             }
         }
     }

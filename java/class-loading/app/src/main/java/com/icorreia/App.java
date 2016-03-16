@@ -24,8 +24,15 @@ public class App {
      * @param args
      */
     public static void main(String[] args) throws Exception{
-
-        JarLoader jarLoader = new JarLoader(Thread.currentThread().getContextClassLoader(), "java/class-loading/version1/target/version1-1.0-SNAPSHOT.jar");
+        /**
+         * The loading class loader can be either:
+         *  - Thread.currentThread().getContextClassLoader()
+         *  - [CLASS_NAME].class.getClassLoader()
+         *
+         * If the value is 'null' and priorityToLocalClasses=false, it will only be able to return
+         * twice the v0 for FilePrinter and will raise an exception for WebPrinter.
+         */
+        JarLoader jarLoader = new JarLoader(null, "java/class-loading/version1/target/version1-1.0-SNAPSHOT.jar", false);
 
         AppPrinter filePrinterV0 = new FilePrinter();
         logger.info("Printer says: {}", filePrinterV0.getVersion());

@@ -1,9 +1,10 @@
 package com.icorreia;
 
 /**
+ * This could be either an abstract class or an interface, they would still both work.
  * Created by ivo.correia on 15/03/2016.
  */
-public interface AppPrinter {
+public abstract class AppPrinter {
 
-    public String getVersion();
+    public abstract String getVersion();
 }
