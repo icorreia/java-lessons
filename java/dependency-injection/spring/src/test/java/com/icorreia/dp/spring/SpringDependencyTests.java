@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * @since 1.0
  */
 public class SpringDependencyTests {
-    
+
     @Test
     public void testDependencyInjection() {
         ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/beans.xml");
