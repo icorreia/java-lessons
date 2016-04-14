@@ -2,6 +2,7 @@ package com.icorreia.dp.spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  *
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
  * @author Ivo Correia (idvcorreia@gmail.com)
  * @since 1.0
  */
+@Component("filePrinterDependency")
 public class FilePrinter implements Printer {
 
     /**

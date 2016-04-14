@@ -7,11 +7,11 @@
     <bean id="webPrinterDependency" class="com.icorreia.dp.spring.WebPrinter" />
     <bean id="filePrinterDependency" class="com.icorreia.dp.spring.FilePrinter" />
 
-    <bean id="filePrinterBean" class="com.icorreia.dp.spring.DependencyBean">
+    <bean id="filePrinterBean" class="com.icorreia.dp.spring.xmlbased.DependencyBean">
         <property name="printer" ref="filePrinterDependency" />
     </bean>
 
-    <bean id="webPrinterBean" class="com.icorreia.dp.spring.DependencyBean">
+    <bean id="webPrinterBean" class="com.icorreia.dp.spring.xmlbased.DependencyBean">
         <property name="printer" ref="webPrinterDependency" />
     </bean>
 
