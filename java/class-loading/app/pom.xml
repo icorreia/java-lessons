@@ -12,6 +12,7 @@
     </parent>
     
     <artifactId>app</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -21,6 +22,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 </project>

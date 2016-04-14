@@ -8,6 +8,6 @@ package com.icorreia;
 public class FilePrinter extends BasePrinter {
 
     public String getVersion() {
-        return "I am a FilePrinter-v1.";
+        return "FilePrinter-v1";
     }
 }

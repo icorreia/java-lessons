@@ -8,6 +8,6 @@ package com.icorreia;
 public class WebPrinter extends BasePrinter {
 
     public String getVersion() {
-        return "I am a WebPrinter.";
+        return "WebPrinter";
     }
 }
