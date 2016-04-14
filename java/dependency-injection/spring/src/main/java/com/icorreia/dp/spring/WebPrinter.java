@@ -1,0 +1,22 @@
+package com.icorreia.dp.spring;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ *
+ *
+ * @author Ivo Correia (idvcorreia@gmail.com)
+ * @since 1.0
+ */
+public class WebPrinter implements Printer {
+
+    /**
+     * A Logger for this class.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(FilePrinter.class);
+
+    public String getPrinter() {
+        return "WebPrinter";
+    }
+}
