@@ -49,6 +49,11 @@
                 <artifactId>spring-context</artifactId>
                 <version>4.2.5.RELEASE</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>3.0</version>
+            </dependency>
 
             <!-- TESTING -->
             <dependency>
